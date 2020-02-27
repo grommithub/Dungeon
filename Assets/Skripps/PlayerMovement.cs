@@ -10,6 +10,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float pushOut;
     [SerializeField] private float jumpStrength;
     [SerializeField] private float runningFactor;
+    [SerializeField] private GameObject axe;
+    [SerializeField] private float swingDistance, swingIntensity;
+    private bool animatingSwing, swingingDown;
     private AudioSource oufer;
     private bool running;
     private Rigidbody rb;
@@ -24,6 +27,8 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         oufer = GetComponent<AudioSource>();
         Cursor.lockState = CursorLockMode.Locked;
+        animatingSwing = false;
+        swingingDown = true;
     }
 
     void Update()
@@ -52,6 +57,32 @@ public class PlayerMovement : MonoBehaviour
         if (onGround && rb.velocity.y < 0.1 && rb.velocity.y > -0.1)
         {
             rb.velocity += new Vector3(0f, Input.GetAxisRaw("Jump") * jumpStrength, 0f);
+        }
+
+        //Axe Animation
+        if (Input.GetMouseButton(0))
+            animatingSwing = true;
+
+        if (animatingSwing)
+        {
+            if (swingingDown)
+            {
+                if (axe.transform.localRotation.eulerAngles.x < swingDistance)
+                    axe.transform.localRotation = Quaternion.Euler(axe.transform.localRotation.eulerAngles.x + swingIntensity, axe.transform.localRotation.eulerAngles.y, 0f);
+                else
+                    swingingDown = false;
+            }
+            else
+            {
+                if (axe.transform.localRotation.eulerAngles.x < 350f)
+                    axe.transform.localRotation = Quaternion.Euler(axe.transform.localRotation.eulerAngles.x - 5f, axe.transform.localRotation.eulerAngles.y, 0f);
+                else
+                {
+                    axe.transform.localRotation = Quaternion.Euler(0f, axe.transform.localRotation.eulerAngles.y, 0f);
+                    swingingDown = true;
+                    animatingSwing = false;
+                }
+            }
         }
     }
 

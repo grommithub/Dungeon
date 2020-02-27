@@ -7,6 +7,7 @@ public class EnemyBehavior : MonoBehaviour
     [SerializeField] private float walkSpeed;
     [SerializeField] private float turnSpeed;
     [SerializeField] private GameObject player;
+    [SerializeField] private AudioSource dink;
     [SerializeField] private GameObject axe;
     [SerializeField] private float swingDistance, swingIntensity;
     private bool animatingSwing, swingingDown;
@@ -16,6 +17,7 @@ public class EnemyBehavior : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         animatingSwing = false;
         swingingDown = true;
+        dink = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -54,8 +56,9 @@ public class EnemyBehavior : MonoBehaviour
         transform.forward = Vector3.Lerp(transform.forward, (player.transform.position - transform.position).normalized, turnSpeed);
     }
 
-    private void SwingAxe()
+    private void OnTriggerEnter(Collider other)
     {
-        
+        if (other.CompareTag("Blade"))
+            dink.Play();
     }
 }
