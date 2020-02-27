@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float pushOut;
     [SerializeField] private float jumpStrength;
     [SerializeField] private float runningFactor;
+    private AudioSource oufer;
     private bool running;
     private Rigidbody rb;
     private bool colliding, onGround;
@@ -21,12 +22,12 @@ public class PlayerMovement : MonoBehaviour
         mouseInput.x = mouseInput.y = 0f;
         movementInput.x = movementInput.y = 0f;
         rb = GetComponent<Rigidbody>();
+        oufer = GetComponent<AudioSource>();
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        print("On Ground: " + onGround + ", Colliding: " + colliding);
-
         //Handling Mouse Input
         mouseInput.x += mouseInputFactor * Input.GetAxis("Mouse X");
         mouseInput.y += mouseInputFactor * Input.GetAxis("Mouse Y");
@@ -40,7 +41,6 @@ public class PlayerMovement : MonoBehaviour
         running = Input.GetKey(KeyCode.LeftShift);
         movementInput.y = moveSpeed * (running && Input.GetAxis("Vertical") > 0 ? runningFactor : 1) * Input.GetAxis("Vertical");
         movementInput.x = moveSpeed * Input.GetAxis("Horizontal");
-
         
         //Horizontal Movement
         transform.rotation = Quaternion.Euler(0f, mouseInput.x, 0f);
@@ -49,10 +49,16 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity += new Vector3(transform.forward.z * movementInput.x, 0f, -transform.forward.x * movementInput.x);
 
         //Vertical Movement
-        if (onGround)
+        if (onGround && rb.velocity.y < 0.1 && rb.velocity.y > -0.1)
         {
-            rb.AddForce(new Vector3(0f, Input.GetAxisRaw("Jump") * jumpStrength, 0f));
+            rb.velocity += new Vector3(0f, Input.GetAxisRaw("Jump") * jumpStrength, 0f);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Blade"))
+            oufer.Play();
     }
 
     private void OnCollisionEnter(Collision collision)
