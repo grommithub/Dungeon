@@ -59,6 +59,15 @@ public class EnemyBehavior : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Blade"))
+        {
+            dink.loop = true;
             dink.Play();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Blade"))
+            dink.loop = false;
     }
 }

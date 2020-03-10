@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetMouseButton(0))
             animatingSwing = true;
 
-        if (animatingSwing)
+        /*if (animatingSwing)
         {
             if (swingingDown)
             {
@@ -83,13 +83,22 @@ public class PlayerMovement : MonoBehaviour
                     animatingSwing = false;
                 }
             }
-        }
+        }*/
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Blade"))
+        {
             oufer.Play();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Blade"))
+        {
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -111,6 +120,8 @@ public class PlayerMovement : MonoBehaviour
             onGround = false;
         else
             colliding = false;
+
+
     }
 }
 
